@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
 import { getReadingList, removeFromReadingList } from '@tmo/books/data-access';
+import { ReadingListItem } from '@tmo/shared/models';
 
 @Component({
   selector: 'tmo-reading-list',
@@ -10,7 +14,7 @@ import { getReadingList, removeFromReadingList } from '@tmo/books/data-access';
 export class ReadingListComponent {
   readingList$ = this.store.select(getReadingList);
 
-  constructor(private readonly store: Store) {}
+  constructor(private readonly store: Store) { }
 
   removeFromReadingList(item) {
     this.store.dispatch(removeFromReadingList({ item }));

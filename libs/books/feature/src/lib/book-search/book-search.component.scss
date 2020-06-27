@@ -61,6 +61,10 @@ form {
   }
 }
 
+.book--no-result {
+  padding: 2px 0px 3px 0px;
+}
+
 .empty {
   display: flex;
   text-align: center;
@@ -68,5 +72,5 @@ form {
   justify-content: center;
   min-height: 50vh;
   font-size: 1.5rem;
-  color: $gray40;
+  color: $gray85;
 }

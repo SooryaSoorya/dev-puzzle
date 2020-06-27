@@ -2,7 +2,9 @@
   <mat-drawer-content>
     <header class="header">
       <div class="header--content">
-        <h1>okreads</h1>
+        <h1 tabindex="0" [attr.aria-label]="appConstants['APP_TITLE']">
+          {{ appConstants['APP_TITLE'] }}
+        </h1>
         <div>
           <button
             data-testing="toggle-reading-list"
@@ -21,10 +23,15 @@
   </mat-drawer-content>
   <mat-drawer #drawer mode="over" position="end">
     <div class="reading-list-container" data-testing="reading-list-container">
-      <h2>
-        My Reading List
-        <button mat-icon-button (click)="drawer.close()">
-          <mat-icon>close</mat-icon>
+      <h2 tabindex="0" aria-label="Reading list">
+        {{ appConstants['READING_LIST_TITLE'] }}
+        <button
+          mat-icon-button
+          (click)="drawer.close()"
+          aria-label="Close reading list side nav"
+          tabindex="0"
+        >
+          <mat-icon aria-hidden="true">close</mat-icon>
         </button>
       </h2>
       <div class="reading-list-content">
