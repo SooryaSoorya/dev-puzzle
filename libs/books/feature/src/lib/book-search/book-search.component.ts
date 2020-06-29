@@ -63,10 +63,8 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   searchBooks() {
-    console.log('books', this.getBooksLoaded$);
     if (this.searchForm.value.term) {
       this.store.dispatch(searchBooks({ term: this.searchTerm.trim() }));
-      console.log('books', this.getBooksLoaded$);
     } else {
       this.store.dispatch(clearSearch());
     }
