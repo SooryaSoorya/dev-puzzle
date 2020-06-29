@@ -1,12 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SharedTestingModule, createReadingListItem } from '@tmo/shared/testing';
-import { MockStore, provideMockStore } from "@ngrx/store/testing";
+import {
+  SharedTestingModule,
+  createReadingListItem
+} from '@tmo/shared/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ReadingListComponent } from './reading-list.component';
 import { BooksFeatureModule } from '@tmo/books/feature';
-import { getReadingList, removeFromReadingList } from "@tmo/books/data-access";
+import {
+  getReadingList,
+  removeFromReadingList,
+  addToReadingList
+} from '@tmo/books/data-access';
 import { ReadingListItem } from '@tmo/shared/models';
+
+export class MatSnackBarMock {
+  public open() {
+    return {
+      onAction: () => of({})
+    };
+  }
+  public dismiss() {}
+}
 
 describe('ReadingListComponent', () => {
   let component: ReadingListComponent;
@@ -18,7 +36,10 @@ describe('ReadingListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [BooksFeatureModule, SharedTestingModule, NoopAnimationsModule],
-      providers: [provideMockStore({ initialState: initialBooksState })]
+      providers: [
+        provideMockStore({ initialState: initialBooksState }),
+        { provide: MatSnackBar, useClass: MatSnackBarMock }
+      ]
     }).compileComponents();
   }));
 
@@ -34,7 +55,15 @@ describe('ReadingListComponent', () => {
 
   it('should remove item from reading list', () => {
     component.removeFromReadingList(item);
-    expect(mockStore.dispatch).toHaveBeenCalledWith(removeFromReadingList({item}));
+    expect(mockStore.dispatch).toHaveBeenCalledWith(
+      removeFromReadingList({ item })
+    );
+  });
+
+  it('should undo item removal from reading list', () => {
+    const book = { id: item.bookId, ...item };
+    component.undoItemRemoval(item);
+    expect(mockStore.dispatch).toHaveBeenCalledWith(addToReadingList({ book }));
   });
 
   it('should create', () => {
