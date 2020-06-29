@@ -21,6 +21,14 @@
       <mat-icon>search</mat-icon>
     </button>
   </mat-form-field>
+  <ng-container>
+    <mat-spinner
+      *ngIf="(getBooksLoaded$ | async) === false && !errorStatus && searchTerm"
+      [diameter]="30"
+      [strokeWidth]="3"
+      class="book-spinner"
+    ></mat-spinner>
+  </ng-container>
 </form>
 
 <ng-container *ngIf="searchTerm; else empty">
