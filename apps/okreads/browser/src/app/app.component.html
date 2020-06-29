@@ -5,8 +5,9 @@
         <h1 tabindex="0" [attr.aria-label]="appConstants['APP_TITLE']">
           {{ appConstants['APP_TITLE'] }}
         </h1>
-        <div>
+        <div role="button">
           <button
+            aria-label="Expand reading List"
             data-testing="toggle-reading-list"
             mat-button
             (click)="drawer.toggle()"
@@ -17,19 +18,19 @@
         </div>
       </div>
     </header>
-    <main>
+    <main role="main">
       <tmo-book-search></tmo-book-search>
     </main>
   </mat-drawer-content>
-  <mat-drawer #drawer mode="over" position="end">
+  <mat-drawer #drawer mode="over" position="end" role="navigation">
     <div class="reading-list-container" data-testing="reading-list-container">
-      <h2 tabindex="0" aria-label="Reading list">
+      <h2 aria-label="My reading list">
         {{ appConstants['READING_LIST_TITLE'] }}
         <button
           mat-icon-button
           (click)="drawer.close()"
-          aria-label="Close reading list side nav"
-          tabindex="0"
+          aria-label="Close reading list"
+          role="button"
         >
           <mat-icon aria-hidden="true">close</mat-icon>
         </button>

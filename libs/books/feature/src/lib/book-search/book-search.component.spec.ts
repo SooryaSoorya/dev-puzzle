@@ -2,12 +2,17 @@ import { expect } from 'chai';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedTestingModule, createBook } from '@tmo/shared/testing';
-import { MockStore, provideMockStore } from "@ngrx/store/testing";
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { By } from '@angular/platform-browser';
 
 import { BooksFeatureModule } from '../books-feature.module';
 import { BookSearchComponent } from './book-search.component';
-import { getAllBooks, getBooksError, clearSearch, addToReadingList } from "@tmo/books/data-access";
+import {
+  getAllBooks,
+  getBooksError,
+  clearSearch,
+  addToReadingList
+} from '@tmo/books/data-access';
 
 describe('BookSearchComponent', () => {
   let component: BookSearchComponent;

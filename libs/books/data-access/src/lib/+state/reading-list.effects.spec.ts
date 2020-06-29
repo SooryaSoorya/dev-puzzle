@@ -5,7 +5,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { DataPersistence, NxModule } from '@nrwl/angular';
 
-import { SharedTestingModule, createReadingListItem, createBook } from '@tmo/shared/testing';
+import {
+  SharedTestingModule,
+  createReadingListItem,
+  createBook
+} from '@tmo/shared/testing';
 import { ReadingListEffects } from './reading-list.effects';
 import * as ReadingListActions from './reading-list.actions';
 import { HttpTestingController } from '@angular/common/http/testing';
@@ -44,35 +48,21 @@ describe('ToReadEffects', () => {
       });
 
       httpMock.expectOne(`${bookDataAccessConstants.listApi}`).flush([]);
-    })
-
-    it('should load items in the reading list', done => {
-      actions = new ReplaySubject();
-      actions.next(ReadingListActions.loadReadingList());
-
-      effects.loadReadingList$.subscribe(action => {
-        expect(action).to.eql(
-          ReadingListActions.loadReadingListSuccess({ list: [] })
-        );
-        done();
-      });
-
-      httpMock.expectOne(`${bookDataAccessConstants.listApi}`).flush([]);
     });
 
     it('should produce error while loading reading list items', done => {
       actions = new ReplaySubject();
       actions.next(ReadingListActions.loadReadingList());
 
-      const res = ReadingListActions.loadReadingListError(new ErrorEvent(""));
+      const res = ReadingListActions.loadReadingListError(new ErrorEvent(''));
       effects.loadReadingList$.subscribe(action => {
-        expect(action.type).to.eql(
-          res.type
-        );
+        expect(action.type).to.eql(res.type);
         done();
       });
 
-      httpMock.expectOne(`${bookDataAccessConstants.listApi}`).error(new ErrorEvent(""));
+      httpMock
+        .expectOne(`${bookDataAccessConstants.listApi}`)
+        .error(new ErrorEvent(''));
     });
   });
 
@@ -88,7 +78,7 @@ describe('ToReadEffects', () => {
         done();
       });
       httpMock.expectOne(`${bookDataAccessConstants.listApi}`).flush(book);
-    })
+    });
 
     it('should undo add to reading list', done => {
       actions = new ReplaySubject();
@@ -101,12 +91,13 @@ describe('ToReadEffects', () => {
         done();
       });
       httpMock
-        .expectOne(`${bookDataAccessConstants.listApi}`).error(new ErrorEvent(""));
+        .expectOne(`${bookDataAccessConstants.listApi}`)
+        .error(new ErrorEvent(''));
     });
 
     it('should provide error while adding book to reading list', done => {
       actions = new ReplaySubject();
-      const book: Book = createBook("BOOK-A");
+      const book: Book = createBook('BOOK-A');
       actions.next(ReadingListActions.addToReadingList({ book }));
       effects.addBook$.subscribe(action => {
         expect(action).to.eql(
@@ -114,14 +105,16 @@ describe('ToReadEffects', () => {
         );
         done();
       });
-      httpMock.expectOne(`${bookDataAccessConstants.listApi}`).error(new ErrorEvent(""));
+      httpMock
+        .expectOne(`${bookDataAccessConstants.listApi}`)
+        .error(new ErrorEvent(''));
     });
-  })
+  });
 
   describe('removeBook$', () => {
     it('should remove the book from reading list', done => {
       actions = new ReplaySubject();
-      const item: ReadingListItem = createReadingListItem("A");
+      const item: ReadingListItem = createReadingListItem('A');
       actions.next(ReadingListActions.removeFromReadingList({ item }));
 
       effects.removeBook$.subscribe(action => {
@@ -130,12 +123,14 @@ describe('ToReadEffects', () => {
         );
         done();
       });
-      httpMock.expectOne(`${bookDataAccessConstants.delApi}${item.bookId}`).flush(item);
+      httpMock
+        .expectOne(`${bookDataAccessConstants.delApi}${item.bookId}`)
+        .flush(item);
     });
 
     it('should provide error while removing book from reading list', done => {
       actions = new ReplaySubject();
-      const item: ReadingListItem = createReadingListItem("B");
+      const item: ReadingListItem = createReadingListItem('B');
       actions.next(ReadingListActions.removeFromReadingList({ item }));
       effects.removeBook$.subscribe(action => {
         expect(action).to.eql(
@@ -143,8 +138,9 @@ describe('ToReadEffects', () => {
         );
         done();
       });
-      httpMock.expectOne(`${bookDataAccessConstants.delApi}${item.bookId}`).error(new ErrorEvent(""));
+      httpMock
+        .expectOne(`${bookDataAccessConstants.delApi}${item.bookId}`)
+        .error(new ErrorEvent(''));
     });
   });
 });
-

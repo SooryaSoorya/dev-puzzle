@@ -6,7 +6,8 @@ import {
   getAllBooks,
   ReadingListBook,
   searchBooks,
-  getBooksError
+  getBooksError,
+  getBooksLoaded
 } from '@tmo/books/data-access';
 import { FormBuilder } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
@@ -18,11 +19,10 @@ import { Subscription, Observable } from 'rxjs';
   styleUrls: ['./book-search.component.scss']
 })
 export class BookSearchComponent implements OnInit, OnDestroy {
-  books: ReadingListBook[];
   errorStatus: Boolean = false;
   getBooksErrorSubscriber: Subscription;
   books$: Observable<ReadingListBook[]> = this.store.select(getAllBooks);
-
+  getBooksLoaded$ = this.store.select(getBooksLoaded);
   searchForm = this.fb.group({
     term: ''
   });
@@ -37,10 +37,6 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select(getAllBooks).subscribe(books => {
-      this.books = books;
-    });
-
     this.getBooksErrorSubscriber = this.store
       .select(getBooksError)
       .subscribe(errorInfo => {
@@ -67,8 +63,10 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   searchBooks() {
+    console.log('books', this.getBooksLoaded$);
     if (this.searchForm.value.term) {
       this.store.dispatch(searchBooks({ term: this.searchTerm.trim() }));
+      console.log('books', this.getBooksLoaded$);
     } else {
       this.store.dispatch(clearSearch());
     }

@@ -13,7 +13,7 @@ describe('When: I use the reading list feature', () => {
     await browser.wait(
       ExpectedConditions.textToBePresentInElement(
         $('[data-testing="reading-list-container"]'),
-        'My Reading List'
+        'My reading list'
       )
     );
   });
