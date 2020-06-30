@@ -8,6 +8,7 @@ import { createBook, SharedTestingModule } from '@tmo/shared/testing';
 
 import { BooksEffects } from './books.effects';
 import * as BooksActions from './books.actions';
+import { bookDataAccessConstants } from '../books-data-access-constants';
 import { HttpTestingController } from '@angular/common/http/testing';
 
 describe('BooksEffects', () => {
@@ -42,7 +43,7 @@ describe('BooksEffects', () => {
         done();
       });
 
-      httpMock.expectOne('/api/books/search?q=').flush([createBook('A')]);
+      httpMock.expectOne(`${bookDataAccessConstants.getApi}`).flush([createBook('A')]);
     });
   });
 });

@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { ReadingListItem } from '@tmo/shared/models';
 import { map } from 'rxjs/operators';
 
+import { bookDataAccessConstants } from '../books-data-access-constants';
+
 @Injectable()
 export class ReadingListEffects implements OnInitEffects {
   loadReadingList$ = createEffect(() =>
@@ -14,7 +16,7 @@ export class ReadingListEffects implements OnInitEffects {
       fetch({
         run: () => {
           return this.http
-            .get<ReadingListItem[]>('/api/reading-list')
+            .get<ReadingListItem[]>(`${bookDataAccessConstants.listApi}`)
             .pipe(
               map(data =>
                 ReadingListActions.loadReadingListSuccess({ list: data })
@@ -22,7 +24,6 @@ export class ReadingListEffects implements OnInitEffects {
             );
         },
         onError: (action, error) => {
-          console.error('Error', error);
           return ReadingListActions.loadReadingListError({ error });
         }
       })
@@ -34,7 +35,7 @@ export class ReadingListEffects implements OnInitEffects {
       ofType(ReadingListActions.addToReadingList),
       optimisticUpdate({
         run: ({ book }) => {
-          return this.http.post('/api/reading-list', book).pipe(
+          return this.http.post(`${bookDataAccessConstants.listApi}`, book).pipe(
             map(() =>
               ReadingListActions.confirmedAddToReadingList({
                 book
@@ -56,7 +57,7 @@ export class ReadingListEffects implements OnInitEffects {
       ofType(ReadingListActions.removeFromReadingList),
       optimisticUpdate({
         run: ({ item }) => {
-          return this.http.delete(`/api/reading-list/${item.bookId}`).pipe(
+          return this.http.delete(`${bookDataAccessConstants.delApi}${item.bookId}`).pipe(
             map(() =>
               ReadingListActions.confirmedRemoveFromReadingList({
                 item
@@ -77,5 +78,5 @@ export class ReadingListEffects implements OnInitEffects {
     return ReadingListActions.loadReadingList();
   }
 
-  constructor(private actions$: Actions, private http: HttpClient) {}
+  constructor(private actions$: Actions, private http: HttpClient) { }
 }

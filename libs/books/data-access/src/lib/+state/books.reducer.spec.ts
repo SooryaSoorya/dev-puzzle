@@ -1,9 +1,17 @@
-import { initialState, reducer, State } from './books.reducer';
+import { initialState, reducer, State, booksAdapter } from './books.reducer';
 import * as BooksActions from './books.actions';
 import { createBook } from '@tmo/shared/testing';
 
 describe('Books Reducer', () => {
   describe('valid Books actions', () => {
+    let state: State;
+    beforeAll(() => {
+      state = booksAdapter.setAll(
+        [createBook('A'), createBook('B'), createBook('C')],
+        initialState
+      );
+    });
+
     it('loadBooksSuccess should return set the list of known Books', () => {
       const books = [createBook('A'), createBook('B'), createBook('C')];
       const action = BooksActions.searchBooksSuccess({ books });
@@ -12,6 +20,30 @@ describe('Books Reducer', () => {
 
       expect(result.loaded).toBe(true);
       expect(result.ids.length).toBe(3);
+    });
+
+    it('search books should return list of all books', () => {
+      const action = BooksActions.searchBooks({ term: 'BOOK' });
+
+      const result: State = reducer(state, action);
+
+      expect(result.ids.length).toBe(3);
+      expect(result.loaded).toBe(false);
+      expect(result.searchTerm).toBe('BOOK');
+    });
+
+    it('search books failure should return an error message', () => {
+      const error = { statusCode: 422, message: 'Missing serach term' };
+      const action = BooksActions.searchBooksFailure({ error });
+
+      const result: State = reducer(state, action);
+      expect(result.error).toBe(error);
+    });
+
+    it('clear search should remove all books in the store', () => {
+      const action = BooksActions.clearSearch();
+      const result = reducer(state, action);
+      expect(result.ids.length).toBe(0);
     });
   });
 

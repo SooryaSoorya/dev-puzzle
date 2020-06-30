@@ -4,7 +4,9 @@ import { fetch } from '@nrwl/angular';
 import * as BooksActions from './books.actions';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+
 import { Book } from '@tmo/shared/models';
+import { bookDataAccessConstants } from '../books-data-access-constants';
 
 @Injectable()
 export class BooksEffects {
@@ -14,14 +16,13 @@ export class BooksEffects {
       fetch({
         run: action => {
           return this.http
-            .get<Book[]>(`/api/books/search?q=${action.term}`)
+            .get<Book[]>(`${bookDataAccessConstants.getApi}${action.term}`)
             .pipe(
               map(data => BooksActions.searchBooksSuccess({ books: data }))
             );
         },
 
         onError: (action, error) => {
-          console.error('Error', error);
           return BooksActions.searchBooksFailure({ error });
         }
       })
@@ -31,5 +32,5 @@ export class BooksEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly http: HttpClient
-  ) {}
+  ) { }
 }

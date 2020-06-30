@@ -12,6 +12,9 @@ form {
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: auto;
+  @media only screen and (max-width: 500px) {
+    grid-template-columns: 100%;
+  }
 }
 
 .book {
@@ -61,6 +64,10 @@ form {
   }
 }
 
+.book--no-result {
+  padding: 2px 0px 3px 0px;
+}
+
 .empty {
   display: flex;
   text-align: center;
@@ -68,5 +75,5 @@ form {
   justify-content: center;
   min-height: 50vh;
   font-size: 1.5rem;
-  color: $gray40;
+  color: $gray85;
 }

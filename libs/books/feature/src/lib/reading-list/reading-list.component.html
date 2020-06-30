@@ -1,11 +1,24 @@
 <ng-container *ngIf="(readingList$ | async).length > 0; else empty">
   <div class="reading-list-item" *ngFor="let b of readingList$ | async">
     <div>
-      <img class="reading-list-item--cover" [src]="b.coverUrl" />
+      <img
+        class="reading-list-item--cover"
+        [src]="b.coverUrl"
+        [alt]="b.title"
+        role="img"
+        aria-label="Reading list item cover"
+      />
     </div>
     <div class="reading-list-item--details">
-      <strong class="reading-list-item--details--title">{{ b.title }}</strong>
-      <div class="reading-list-item--details--author">
+      <strong
+        class="reading-list-item--details--title"
+        [attr.aria-label]="'Book title ' + b.title"
+        >{{ b.title }}</strong
+      >
+      <div
+        class="reading-list-item--details--author"
+        [attr.aria-label]="'Book Author ' + b.authors.join(',')"
+      >
         {{ b.authors.join(',') }}
       </div>
     </div>
@@ -14,9 +27,10 @@
         mat-icon-button
         color="warn"
         [attr.aria-label]="'Remove ' + b.title + ' from reading list'"
+        role="button"
         (click)="removeFromReadingList(b)"
       >
-        <mat-icon>remove_circle</mat-icon>
+        <mat-icon aria-hidden="true">remove_circle</mat-icon>
       </button>
     </div>
   </div>
