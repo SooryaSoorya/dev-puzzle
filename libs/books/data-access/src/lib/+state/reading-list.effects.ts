@@ -35,13 +35,15 @@ export class ReadingListEffects implements OnInitEffects {
       ofType(ReadingListActions.addToReadingList),
       optimisticUpdate({
         run: ({ book }) => {
-          return this.http.post(`${bookDataAccessConstants.listApi}`, book).pipe(
-            map(() =>
-              ReadingListActions.confirmedAddToReadingList({
-                book
-              })
-            )
-          );
+          return this.http
+            .post(`${bookDataAccessConstants.listApi}`, book)
+            .pipe(
+              map(() =>
+                ReadingListActions.confirmedAddToReadingList({
+                  book
+                })
+              )
+            );
         },
         undoAction: ({ book }) => {
           return ReadingListActions.failedAddToReadingList({
@@ -57,16 +59,43 @@ export class ReadingListEffects implements OnInitEffects {
       ofType(ReadingListActions.removeFromReadingList),
       optimisticUpdate({
         run: ({ item }) => {
-          return this.http.delete(`${bookDataAccessConstants.delApi}${item.bookId}`).pipe(
-            map(() =>
-              ReadingListActions.confirmedRemoveFromReadingList({
-                item
-              })
-            )
-          );
+          return this.http
+            .delete(`${bookDataAccessConstants.delApi}${item.bookId}`)
+            .pipe(
+              map(() =>
+                ReadingListActions.confirmedRemoveFromReadingList({
+                  item
+                })
+              )
+            );
         },
         undoAction: ({ item }) => {
           return ReadingListActions.failedRemoveFromReadingList({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  finishReadingListItem$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.finishReadingFromReadingList),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(
+              `${bookDataAccessConstants.listApi}/${item.bookId}/finished`,
+              null
+            )
+            .pipe(
+              map((markedItemStatus: ReadingListItem[]) =>
+                ReadingListActions.loadReadingList()
+              )
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedFinishReading({
             item
           });
         }
@@ -78,5 +107,5 @@ export class ReadingListEffects implements OnInitEffects {
     return ReadingListActions.loadReadingList();
   }
 
-  constructor(private actions$: Actions, private http: HttpClient) { }
+  constructor(private actions$: Actions, private http: HttpClient) {}
 }

@@ -143,4 +143,33 @@ describe('ToReadEffects', () => {
         .error(new ErrorEvent(''));
     });
   });
+
+  describe('finishReadingListItem$', () => {
+    it('should set book finished', done => {
+      const book = createBook('A');
+      const item = createReadingListItem('A');
+      actions = new ReplaySubject();
+      actions.next(ReadingListActions.finishReadingFromReadingList({ item }));
+      effects.finishReadingListItem$.subscribe(action => {
+        expect(action).to.eql(ReadingListActions.loadReadingList());
+        done();
+      });
+      httpMock
+        .expectOne(`${bookDataAccessConstants.listApi}/${item.bookId}/finished`)
+        .flush(book);
+    });
+
+    it('should fail the setting the book as finished', done => {
+      const item = createReadingListItem('A');
+      actions = new ReplaySubject();
+      actions.next(ReadingListActions.finishReadingFromReadingList({ item }));
+      effects.finishReadingListItem$.subscribe(action => {
+        expect(action).to.eql(ReadingListActions.failedFinishReading({ item }));
+        done();
+      });
+      httpMock
+        .expectOne(`${bookDataAccessConstants.listApi}/${item.bookId}/finished`)
+        .error(new ErrorEvent(''));
+    });
+  });
 });

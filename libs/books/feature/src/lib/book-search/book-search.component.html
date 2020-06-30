@@ -49,7 +49,7 @@
               [attr.aria-label]="'Add ' + b.title + ' to the reading list'"
               role="button"
             >
-              Want to Read
+              {{ b.finished ? 'Finished  Reading' : 'Want to Read' }}
             </button>
           </div>
         </div>
