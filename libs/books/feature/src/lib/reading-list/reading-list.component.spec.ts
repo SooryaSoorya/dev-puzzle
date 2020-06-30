@@ -1,11 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SharedTestingModule, createReadingListItem } from '@tmo/shared/testing';
-import { MockStore, provideMockStore } from "@ngrx/store/testing";
+import {
+  SharedTestingModule,
+  createReadingListItem
+} from '@tmo/shared/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ReadingListComponent } from './reading-list.component';
 import { BooksFeatureModule } from '@tmo/books/feature';
-import { getReadingList, removeFromReadingList } from "@tmo/books/data-access";
+import {
+  getReadingList,
+  removeFromReadingList,
+  finishReadingFromReadingList
+} from '@tmo/books/data-access';
 import { ReadingListItem } from '@tmo/shared/models';
 
 describe('ReadingListComponent', () => {
@@ -34,10 +41,16 @@ describe('ReadingListComponent', () => {
 
   it('should remove item from reading list', () => {
     component.removeFromReadingList(item);
-    expect(mockStore.dispatch).toHaveBeenCalledWith(removeFromReadingList({item}));
+    expect(mockStore.dispatch).toHaveBeenCalledWith(
+      removeFromReadingList({ item })
+    );
+    expect(mockStore.dispatch).toHaveBeenCalled();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should Mark reading status of a book from reading list', () => {
+    component.markBookReadingStatus(item);
+    expect(mockStore.dispatch).toHaveBeenCalledWith(
+      finishReadingFromReadingList({ item })
+    );
   });
 });
