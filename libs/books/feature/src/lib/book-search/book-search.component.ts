@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Subscription, Observable } from 'rxjs';
+
+import { BOOKS_CONSTANTS } from '../books.constants';
 import {
   addToReadingList,
   clearSearch,
@@ -9,9 +14,7 @@ import {
   getBooksError,
   getBooksLoaded
 } from '@tmo/books/data-access';
-import { FormBuilder } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
-import { Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'tmo-book-search',
@@ -21,10 +24,12 @@ import { Subscription, Observable } from 'rxjs';
 export class BookSearchComponent implements OnInit, OnDestroy {
   errorStatus: Boolean = false;
   getBooksErrorSubscriber: Subscription;
+  instantSearchSubscriber: Subscription;
   books$: Observable<ReadingListBook[]> = this.store.select(getAllBooks);
   getBooksLoaded$ = this.store.select(getBooksLoaded);
+
   searchForm = this.fb.group({
-    term: ''
+    term: ['', [Validators.required]]
   });
 
   constructor(
@@ -37,6 +42,10 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.instantSearchSubscriber = this.searchForm.valueChanges
+      .pipe(debounceTime(BOOKS_CONSTANTS.DEBOUNCE_TIME), distinctUntilChanged())
+      .subscribe(() => this.searchBooks());
+
     this.getBooksErrorSubscriber = this.store
       .select(getBooksError)
       .subscribe(errorInfo => {
@@ -48,6 +57,9 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.instantSearchSubscriber) {
+      this.instantSearchSubscriber.unsubscribe();
+    }
     if (this.getBooksErrorSubscriber) {
       this.getBooksErrorSubscriber.unsubscribe();
     }
@@ -58,12 +70,11 @@ export class BookSearchComponent implements OnInit, OnDestroy {
   }
 
   searchExample() {
-    this.searchForm.controls.term.setValue('javascript');
-    this.searchBooks();
+    this.searchForm.controls.term.setValue(BOOKS_CONSTANTS.SEARCH_DEFAULT_TEXT);
   }
 
   searchBooks() {
-    if (this.searchForm.value.term) {
+    if (this.searchForm.valid) {
       this.store.dispatch(searchBooks({ term: this.searchTerm.trim() }));
     } else {
       this.store.dispatch(clearSearch());
